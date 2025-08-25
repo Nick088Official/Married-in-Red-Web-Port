@@ -90,6 +90,32 @@ Once you have made the modifications, you need to run them using a local web ser
 
 The game should now start and be fully playable.
 
+### Part F: Fix Problematic Filenames for Web Servers (Optional)
+
+While the game works on a local server after the previous fixes, some image files have names with special characters (like `$` or `%()`) and inconsistent capitalization. Local Windows servers can handle this, but web servers like GitHub Pages are much stricter and case-sensitive. This can lead to "Failed to load" errors for specific images when the game is hosted online.
+
+The solution is to rename these files to a web-safe format and then update the game's events to use these new names.
+
+1. This one-liner script will automatically find and rename all image files with problematic characters to a safe format (e.g., `$Boksu%(5).png` becomes `$Boksu_5.png`). Open a Powershell/Terminal in your **root game folder** and run:
+    - For Windows (in PowerShell):
+        ```powershell
+        Rename-Item -Path 'www\img\characters\$Boksu%(5).png' -NewName '$Boksu_5.png'; Rename-Item -Path 'www\img\characters\$BoksuBloody%(5).png' -NewName '$BoksuBloody_5.png'; Rename-Item -Path 'www\img\characters\$BoksuCoatOff%(5).png' -NewName '$BoksuCoatOff_5.png'; Rename-Item -Path 'www\img\characters\$BoksuCoatOffLighting%(5).png' -NewName '$BoksuCoatOffLighting_5.png'; Rename-Item -Path 'www\img\characters\$BoksuWhite%(5).png' -NewName '$BoksuWhite_5.png'; Rename-Item -Path 'www\img\characters\$BoksuWhiteLighting%(5).png' -NewName '$BoksuWhiteLighting_5.png'; Rename-Item -Path 'www\img\characters\$KillAnimation%(8).png' -NewName '$KillAnimation_8.png'; Rename-Item -Path 'www\audio\bgm\(Menu) Time and Silence.ogg' -NewName 'Menu_Time_and_Silence.ogg'; Rename-Item -Path 'www\audio\bgm\(Menu) Time and Silence.m4a' -NewName 'Menu_Time_and_Silence.m4a'
+        ```
+    - For macOS & Linux:
+        ```bash
+        mv "www/img/characters/\$Boksu%(5).png" "www/img/characters/\$Boksu_5.png" && mv "www/img/characters/\$BoksuBloody%(5).png" "www/img/characters/\$BoksuBloody_5.png" && mv "www/img/characters/\$BoksuCoatOff%(5).png" "www/img/characters/\$BoksuCoatOff_5.png" && mv "www/img/characters/\$BoksuCoatOffLighting%(5).png" "www/img/characters/\$BoksuCoatOffLighting_5.png" && mv "www/img/characters/\$BoksuWhite%(5).png" "www/img/characters/\$BoksuWhite_5.png" && mv "www/img/characters/\$BoksuWhiteLighting%(5).png" "www/img/characters/\$BoksuWhiteLighting_5.png" && mv "www/img/characters/\$KillAnimation%(8).png" "www/img/characters/\$KillAnimation_8.png" && mv "www/audio/bgm/(Menu) Time and Silence.ogg" "www/audio/bgm/Menu_Time_and_Silence.ogg" && mv "www/audio/bgm/(Menu) Time and Silence.m4a" "www/audio/bgm/Menu_Time_and_Silence.m4a"
+        ```
+2. This one-liner script will automatically find and rename all references to image files with problematic characters to a safe format (e.g., `$Boksu%(5).png` becomes `$Boksu_5.png`) inside of the `js` folder. Open a Powershell/Terminal in your **root game folder** and run:
+    - For Windows (in PowerShell):
+        ```powershell
+        Get-ChildItem -Path 'www\data' -Filter '*.json' | ForEach-Object { $originalContent = Get-Content -Path $_.FullName -Raw; $newContent = $originalContent -replace '\$Boksu%\(5\)', '$Boksu_5' -replace '\$BoksuBloody%\(5\)', '$BoksuBloody_5' -replace '\$BoksuCoatOff%\(5\)', '$BoksuCoatOff_5' -replace '\$BoksuCoatOffLighting%\(5\)', '$BoksuCoatOffLighting_5' -replace '\$BoksuWhite%\(5\)', '$BoksuWhite_5' -replace '\$BoksuWhiteLighting%\(5\)', '$BoksuWhiteLighting_5' -replace '\$KillAnimation%\(8\)', '$KillAnimation_8' -replace '\(Menu\) Time and Silence', 'Menu_Time_and_Silence'; if ($originalContent -ne $newContent) { Write-Host "Updating references in: $($_.FullName)"; Set-Content -Path $_.FullName -Value $newContent -NoNewline } }
+        ```
+    - For macOS & Linux:
+        ```bash
+        find www/data -name "*.json" -exec sed -i.bak -e 's/$Boksu%(5)/$Boksu_5/g' -e 's/$BoksuBloody%(5)/$BoksuBloody_5/g' -e 's/$BoksuCoatOff%(5)/$BoksuCoatOff_5/g' -e 's/$BoksuCoatOffLighting%(5)/$BoksuCoatOffLighting_5/g' -e 's/$BoksuWhite%(5)/$BoksuWhite_5/g' -e 's/$BoksuWhiteLighting%(5)/$BoksuWhiteLighting_5/g' -e 's/$KillAnimation%(8)/$KillAnimation_8/g' -e 's/(Menu) Time and Silence/Menu_Time_and_Silence/g' {} +
+        ```
+        You can remove the .bak files later.
+
 
 ## Why did you make it?
 
