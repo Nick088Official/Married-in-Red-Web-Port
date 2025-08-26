@@ -8,7 +8,7 @@ This is an **Unofficial Web Port** of the free RPG Maker MV horror game [**Marri
 
 There are 2 methods:
 
-### Github Pages
+### GitHub Pages
 Go to https://nick088official.github.io/Married-in-Red-Web-Port/www/
 
 ### Local Server
